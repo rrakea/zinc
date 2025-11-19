@@ -49,7 +49,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter", " ":
-			go install(Package{})
+			row := m.table.SelectedRow()
+			if len(row) > 0 {
+				install(m.row_map[row[0]])
+			}
 			return m, tea.Quit
 		case "esc", "crtl+c":
 			return m, tea.Quit
