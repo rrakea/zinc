@@ -11,6 +11,8 @@ import (
 
 const AUR_URL = "https://aur.archlinux.org/rpc/v5/"
 
+var search_chan chan []Package
+
 type API_return struct {
 	Version      int       `json:"version"`
 	Res_type     string    `json:"type"`
@@ -37,11 +39,11 @@ func Search(name string) []Package {
 		log.Fatal("Incorrect API response type")
 	}
 
-	for _, item := range res.Body {
+	/* for _, item := range res.Body {
 		item.print()
 		fmt.Println()
 		fmt.Println()
-	}
+	} */
 
 	return res.Body
 }
@@ -75,14 +77,10 @@ func send_request(url string) API_return {
 	}
 
 	if res.Res_type == "error" {
-		log.Fatal("API Response Error: ", res.Error)
+		fmt.Println("API Response Error: ", res.Error)
 	}
 
 	return res
-}
-
-func Info(name string) {
-
 }
 
 func (r *Package) print() {
