@@ -23,8 +23,8 @@ func default_model() Model {
 	input.Width = 20
 
 	columns := []table.Column{
-		{Title: "Name", Width: 10},
-		{Title: "Description", Width: 30},
+		{Title: "Name", Width: 20},
+		{Title: "Description", Width: 60},
 	}
 	rows := []table.Row{}
 	table := table.New(table.WithColumns(columns), table.WithRows(rows), table.WithFocused(false))
@@ -48,7 +48,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter", " ":
+		case "enter":
 			row := m.table.SelectedRow()
 			if len(row) > 0 {
 				install(m.row_map[row[0]])
@@ -56,6 +56,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "esc", "crtl+c":
 			return m, tea.Quit
+		default:
+			input_chan <- m.input.Value()
 		}
 
 	case []Package:
@@ -68,8 +70,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		m.table.SetRows(rows)
 	}
-
-	go func() { input_chan <- m.input.Value() }()
 
 	m.input, cmd_input = m.input.Update(msg)
 	m.table, cmd_table = m.table.Update(msg)
