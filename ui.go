@@ -51,9 +51,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			row := m.table.SelectedRow()
 			if len(row) > 0 {
-				install(m.row_map[row[0]])
+				to_install = m.row_map[row[0]].Name
 			}
 			return m, tea.Quit
+		case "down":
+			m.table.MoveDown(1)
+		case "up":
+			m.table.MoveUp(1)
 		case "esc", "crtl+c":
 			return m, tea.Quit
 		default:
@@ -82,5 +86,5 @@ func (m Model) View() string {
 	style.BorderStyle(lipgloss.DoubleBorder())
 	style.BorderForeground(lipgloss.Color("0"))
 
-	return style.Render(m.table.View()) + m.input.View()
+	return style.Render(m.table.View()) + "\n" + m.input.View()
 }

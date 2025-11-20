@@ -13,22 +13,24 @@ func main() {
 	input_chan = input
 	search_chan = search
 
-	p := tea.NewProgram(default_model())
+	p := tea.NewProgram(default_model(), tea.WithAltScreen())
 
 	go func() {
-		if _, err := p.Run(); err != nil {
-			log.Fatal("Bubble tea error")
+		for {
+			select {
+			case packages := <-search:
+				p.Send(packages)
+			case input_str := <-input:
+				if len(input_str) > 2 {
+					go Search(input_str)
+				}
+			}
 		}
 	}()
 
-	for {
-		select {
-		case packages := <-search:
-			p.Send(packages)
-		case input_str := <-input:
-			if len(input_str) > 5 {
-				go Search(input_str)
-			}
-		}
+	if _, err := p.Run(); err != nil {
+		log.Fatal("Bubble tea error")
 	}
+
+	install()
 }

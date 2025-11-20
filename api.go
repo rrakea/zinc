@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"slices"
 )
 
 const AUR_URL = "https://aur.archlinux.org/rpc/v5/"
@@ -32,15 +33,22 @@ type Package struct {
 }
 
 func Search(name string) {
+	//fmt.Println("Starting search for package: ", name)
 	url := AUR_URL + "/search/" + name + "?by=name"
 	res := send_request(url)
 	if res.Res_type != "search" {
 		log.Fatal("Incorrect API response type")
 	}
+
+	cmp := func(a, b Package) int {
+		return int(a.Popularity - b.Popularity)
+	}
+	slices.SortFunc(res.Body, cmp)
+
 	search_chan <- res.Body
 }
 
-func send_request(url string) API_return {
+func send_request(url string) *API_return {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal("Could access the aur; ", err)
@@ -72,5 +80,6 @@ func send_request(url string) API_return {
 		fmt.Println("API Response Error: ", res.Error)
 	}
 
-	return res
+	return &res
 }
+
