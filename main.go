@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -13,7 +14,7 @@ func main() {
 	input_chan = input
 	search_chan = search
 
-	p := tea.NewProgram(default_model(), tea.WithAltScreen())
+	p := tea.NewProgram(default_model() /* , tea.WithAltScreen()*/)
 
 	go func() {
 		for {
@@ -31,6 +32,8 @@ func main() {
 	if _, err := p.Run(); err != nil {
 		log.Fatal("Bubble tea error")
 	}
+
+	fmt.Print("\033[H\033[2J")
 
 	install()
 }

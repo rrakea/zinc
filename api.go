@@ -26,7 +26,6 @@ type Package struct {
 	Version     string  `json:"Version"`
 	Desc        string  `json:"Description"`
 	Url         string  `json:"URL"`
-	Votes       int     `json:"NumVotes"`
 	Popularity  float64 `json:"Popularity"`
 	Out_of_date int     `json:"OutOfDate"`
 	Maintainer  string  `json:"Maintainer"`
@@ -41,7 +40,7 @@ func Search(name string) {
 	}
 
 	cmp := func(a, b Package) int {
-		return int(a.Popularity - b.Popularity)
+		return int(b.Popularity - a.Popularity)
 	}
 	slices.SortFunc(res.Body, cmp)
 
@@ -51,7 +50,7 @@ func Search(name string) {
 func send_request(url string) *API_return {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Could access the aur; ", err)
+		log.Fatal("Couldnt access the aur; ", err)
 	}
 	defer resp.Body.Close()
 
@@ -82,4 +81,3 @@ func send_request(url string) *API_return {
 
 	return &res
 }
-
