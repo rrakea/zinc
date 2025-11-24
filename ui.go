@@ -75,11 +75,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case []Package:
-		//fmt.Println("Package recieved")
 		m.row_map = make(map[string]Package)
 		rows := []table.Row{}
 		for _, p := range msg {
-			rows = append(rows, table.Row{p.Name, p.Desc})
+			rows = append(rows, table.Row{p.Name})
 			m.row_map[p.Name] = p
 		}
 
@@ -97,13 +96,21 @@ func (m Model) View() string {
 		Border(lipgloss.RoundedBorder(), true).
 		BorderForeground(lipgloss.Color("#cba6f7"))
 
-	top := lipgloss.JoinHorizontal(0, style.Render(m.packages.View()), style.Width(30).Render(m.info))
-	full := lipgloss.JoinVertical(0, top, style.Width(70).Render(m.input.View()))
+	top := lipgloss.JoinHorizontal(0, style.Render(m.packages.View()), style.Width(40).Render(m.info))
+	full := lipgloss.JoinVertical(0, top, style.Width(84).Render(m.input.View()))
 
 	return full
 }
 
 func info(p Package) string {
+	if p.Name == "" {
+		buf := ""
+		for range 9 {
+			buf += "\n"
+		}
+		return buf
+	}
+
 	var out_of_date string
 	if p.Out_of_date == 0 {
 		out_of_date = "No"
